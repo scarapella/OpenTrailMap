@@ -30,6 +30,7 @@ The following styles show allowed trail access for different travel modes. Dark 
 - Horseback Riding Trails ([`horse`](https://wiki.openstreetmap.org/wiki/Key:horse) access)
 - ATV Trails ([`atv`](https://wiki.openstreetmap.org/wiki/Key:atv) access)
 - Cross-Country Ski Trails ([`ski:nordic`](https://wiki.openstreetmap.org/wiki/Key:ski:nordic) access)
+- Ice Skating Trails ([`ice_skates`](https://wiki.openstreetmap.org/wiki/Key:ice_skates) access)/[`portage`](https://wiki.openstreetmap.org/wiki/Key:portage) access)
 - Snowmobile Trails ([`snowmobile`](https://wiki.openstreetmap.org/wiki/Key:snowmobile) access)
 
 The following styles highlight the presence and values of trail attribute tags. Purple lines mean an attribute is missing, incomplete, or needs review, while teal lines indicate the attribute is good to go.
@@ -56,7 +57,7 @@ In all the land and snow styles, some trail-related points of interest are inclu
 
 Currently, just one marine travel mode is supported:
 
-- Canoe & Kayak Trails ([`canoe`](https://wiki.openstreetmap.org/wiki/Key:canoe)/[`portage`](https://wiki.openstreetmap.org/wiki/Key:portage) access)
+- Canoe & Kayak Trails ([`canoe`](https://wiki.openstreetmap.org/wiki/Key:canoe)/[`kluning`](https://wiki.openstreetmap.org/wiki/Key:kluning) kluning)
 
 The following water trail attribute styles are supported:
 

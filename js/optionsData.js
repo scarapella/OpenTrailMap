@@ -223,5 +223,6 @@ export const lensOptionsByMode = {
   "inline_skates": basicLensOptions,
   "snowmobile": vehicleLensOptions,
   "ski:nordic": basicLensOptions,
+  "ice_skates": basicLensOptions,
   "wheelchair": basicLensOptions,
 };

@@ -235,6 +235,8 @@ export function generateStyle(baseStyleJsonString, travelMode, lens) {
       ["in", ["get", "ski"], noaccessValsLiteral],
       isNotHighwayExpression,
     ],
+    ice_skates: ["!", ["has", "ice_skates"]],
+    kluning: ["!", ["has", "kluning"]],
     snowmobile: [
       "any",
       ["in", ["get", "highway"], ["literal", ["footway", "steps"]]],
@@ -270,6 +272,7 @@ export function generateStyle(baseStyleJsonString, travelMode, lens) {
     mtb: ['vehicle', 'bicycle', 'mtb'],
     portage: ['foot', 'portage'],
     'ski:nordic': ['foot', 'ski', 'ski:nordic'],
+    ice_skates : ['ice_skates'],
     snowmobile: ['vehicle', 'motor_vehicle', 'snowmobile'],
     wheelchair: ['foot', 'wheelchair'],
   };
@@ -325,11 +328,13 @@ export function generateStyle(baseStyleJsonString, travelMode, lens) {
         modeIsAllowedExpression("inline_skates"),
         modeIsAllowedExpression("snowmobile"),
         modeIsAllowedExpression("ski:nordic"),
+        modeIsAllowedExpression("ice_skates"),
         modeIsAllowedExpression("canoe"),
       ];
     } else {
       let modes = [travelMode];
       if (travelMode == "canoe") modes.push('portage');
+      if (travelMode == "ice_skates") modes.push('kluning');
       allowedAccessExpression = [
         "any",
         ...modes.map(function(mode) {  
@@ -355,6 +360,7 @@ export function generateStyle(baseStyleJsonString, travelMode, lens) {
         ["!=", ["get", "portage"], "unknown"],
         ["!=", ["get", "snowmobile"], "unknown"],
         ["!=", ["get", "ski:nordic"], "unknown"],
+        ["!=", ["get", "ice_skates"], "unknown"],
       ];  
     }
 
@@ -1048,11 +1054,13 @@ export function generateStyle(baseStyleJsonString, travelMode, lens) {
       case 'access':
         let keys = accessHierarchy[travelMode].slice().reverse();
         if (travelMode === 'canoe') keys.push('portage');
+        if (travelMode === 'ice_skates') keys.push('kluning');
         keys.push('access');
         return keys;
       case 'name': 
         switch (travelMode) {
           case "canoe": return ['name', 'waterbody:name', 'noname'];
+          case "ice_skates": return ['name', 'waterbody:name', 'noname'];
           case 'mtb': return ['name', 'mtb:name', 'noname'];
         }
         return ['name', 'noname'];
@@ -1185,7 +1193,7 @@ export function generateStyle(baseStyleJsonString, travelMode, lens) {
   }
 */
   function poiIconImageExpression(travelMode) {
-    let showHazards = travelMode === "canoe";
+    let showHazards = travelMode === "canoe" || travelMode === "ice_skates";
     return [
       "case",
       ["==", ["get", "route"], "ferry"], [
@@ -1283,7 +1291,7 @@ export function generateStyle(baseStyleJsonString, travelMode, lens) {
     ];
     
     if (travelMode !== "all") {
-      if (travelMode !== "canoe") {
+      if (travelMode !== "canoe" && travelMode !== "ice_skates ") {
         // don't show canoe-specific POIs for other travel modes
         filter.push([
           "!", [
@@ -1295,10 +1303,21 @@ export function generateStyle(baseStyleJsonString, travelMode, lens) {
             ["==", ["get", "man_made"], "monitoring_station"],
           ]
         ]);
-      }
+      } /*else if ( travelMode === "ice_skates ") {
+        // don't show canoe-specific POIs for other travel modes
+        filter.push([
+          "!", [
+            "any",
+            ["in", ["get", "waterway"], ["literal", ["dam", "weir"]]],
+            ["==", ["get", "lock"], "yes"],
+            ["==", ["get", "man_made"], "monitoring_station"],
+          ]
+        ]);
+      }*/
       const poiKeysByTravelMode = {
         "foot": ["hiking"],
         "canoe": ["canoe", "portage"],
+        "ice_skates": ["ice_skates", "kluning"],
       };
       const poiKeys = poiKeysByTravelMode[travelMode] ? poiKeysByTravelMode[travelMode] : [travelMode];
       filter.push([
@@ -1312,7 +1331,7 @@ export function generateStyle(baseStyleJsonString, travelMode, lens) {
             ["==", ["get", "route"], "ferry"],
           ]
         ],
-        travelMode === "canoe" ? [
+        travelMode === "canoe" || travelMode === "ice_skates"? [
           "any",
           ...poiKeys.map(function(key) {
             return ["==", ["get", key], "yes"];
@@ -1418,6 +1437,21 @@ export function generateStyle(baseStyleJsonString, travelMode, lens) {
         [
           "all",
           accessIsSpecifiedExpression('portage'),
+          ["!", isWaterwayExpression],
+        ],
+      ];
+    }
+    if (travelMode === "ice_skates") {
+      filter = [
+        "any",
+        [
+          "all",
+          filter,
+          isWaterwayExpression,
+        ],
+        [
+          "all",
+          accessIsSpecifiedExpression('kluning'),
           ["!", isWaterwayExpression],
         ],
       ];
